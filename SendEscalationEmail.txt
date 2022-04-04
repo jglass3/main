@@ -1,0 +1,53 @@
+//JavaScript: Provoked based on delayed timer to send escalation email 
+
+
+function sendEscalationEmailManagement() {
+
+  var date = new Date();
+  var dateU = Utilities.formatDate(new Date(), "GMT","d");
+  var month = date.getMonth();
+  var months = month + 1;
+  var monthDay = months + "/" + dateU;
+
+  var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+  var ss4 = spreadsheet.getSheetByName("Sheet4");
+  var ss3 = spreadsheet.getSheetByName("Sheet3");
+
+  //GET DATA
+  var reaction = ss4.getRange("G2:G").getValues();
+  var getDate = ss4.getRange("A2:A").getValues();
+  var getName = ss4.getRange("D2:D").getValues();
+  var getStationClass = ss4.getRange("C2:C").getValues();
+  var getStation = ss4.getRange("B2:B").getValues();
+  var getLevel = ss4.getRange("E2:E").getValues();
+  var dept = ss3.getRange("B1").getValues();
+ 
+  for(var i = 0; i < getDate.length; i++) {
+
+    var getDateVal = getDate[i].toString().slice(4,10);
+    var todayDate = date.toString().slice(4,10);
+    var reactionVal = reaction[i].toString();
+    var getNameVal = getName[i].toString();
+    var getLevelVal = getLevel[i].toString();
+    var getStationVal = getStation[i].toString();
+    var getStationClassVal = getStationClass[i].toString();
+   
+   Logger.log([getDateVal, todayDate, reactionVal, getLevelVal, getStationClassVal])
+
+
+    if(getDateVal == todayDate && reactionVal == "" && getLevelVal < 4 && getStationClassVal > 2) {
+
+     var emailAddress = "....";
+     var subject = "QC#1 ALERT!";
+     var message = "Department " + dept + ": " + getNameVal + " is at a critical station" 
+
+  MailApp.sendEmail(emailAddress, subject, message); //send email  
+
+     //END IF STATEMENT
+    }
+
+   //END LOOP
+  }
+          
+ //END SCRIPT
+}
