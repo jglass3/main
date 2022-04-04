@@ -1,0 +1,47 @@
+//JavaScript
+/*
+Adding a time based trigger to run the code every morning to add to the report
+  - Triggers are setup in Google Scripts under triggers
+
+Purpose of this is code is to save costs on time 
+from grabbing data from automated, daily generated emails
+and then push that data or text information into a spreadsheet
+for easier visibility 
+
+Code currently grabs emails from my indox "9842 QDAS", so the code has to run on 
+a specific user's inbox. 
+
+Regex expression used to extract specific words into each cell
+Ex.
+=ARRAYFORMULA(IF(A2:A="","",IFERROR(IFERROR(REGEXEXTRACT(A2:A,"9842"),REGEXEXTRACT(A2:A,"9835")),"No Dept")))
+*/
+
+function myFunction() {
+
+  var sheet = SpreadsheetApp.getActive(); //Calls on spreadsheet app aka Google Sheets
+  var ss = sheet.getSheetByName("Sheet1") //Grabs specific sheet
+  var label = GmailApp.getUserLabelByName("9842 QDAS"); //Grabs folder in inbox
+  var threads = label.getThreads(); //Grabs individual line items in folder
+
+  for (var i=0; i<threads.length; i++) //loops through threads aka line items
+  {
+    var messages = threads[i].getMessages(); //gets individual messages
+
+    for (var j=0; j<messages.length; j++) //loops through individual messages
+    {
+      var msg = messages[j].getBody(); //gets all of message body
+      var msg2 = msg.split(" "); //splits body by spaces, and arrays the split
+      
+      var dat = messages[j].getDate(); //gets date associated with email
+      var formatted = Utilities.formatDate(dat, "PST", "yyyy-MM-dd' 'HH:mm:ss"); //formats date
+      var time = formatted.split(" "); //splits date by spaces and arrays the split
+      
+      
+        Logger.log(msg2) //Logs the data before pushing data into cell
+        
+        ss.appendRow([msg, time[0], time[1]]); //pushes formatted time into different cells
+    }
+        threads[i].removeLabel(label); //deletes emails as it loops through
+  }
+    
+}
