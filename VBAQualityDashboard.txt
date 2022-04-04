@@ -1,0 +1,229 @@
+'Quality dashboards metrics 
+'Update metrics based on previous/current week, month, year
+'Which updates a trend chart automatically
+'Data model bring in most recent data
+
+'
+'
+'
+'Refresh data function
+'
+'
+'
+Sub Workbook_RefreshAll()
+
+    Application.ScreenUpdating = False
+    
+    Worksheets("Dashboard, By FTQ").Activate
+
+    ActiveWorkbook.RefreshAll
+    
+    Worksheets("242 Family, Data").Activate
+    
+    ActiveWorkbook.RefreshAll
+    
+    Worksheets("Dashboard, By FTQ").Activate
+    
+    Application.Wait (Now + TimeValue("0:00:05"))
+    
+    Application.ScreenUpdating = True
+    
+End Sub
+
+'
+'
+'Update "Last Update" time/date cell
+'
+'
+
+Sub SR_Update()
+
+Worksheets("Strategy Room, FTQ").Activate
+Range("Q2").Activate
+updateDate = Format(Date, "dd mmmm yyyy")
+ActiveCell.Value = updateDate
+
+End Sub
+
+'
+'
+'
+'Change values of date range based on current time
+'in anchorments of previous/current week, month, and year'
+'
+'
+'
+
+Sub DS_UpdateCharts()
+
+Dim Tdaynum As Integer
+Dim Tweeknum As Integer
+Dim Tmonthnum As Integer
+Dim updateDate As String
+
+Dim currentweekRangeStart As String
+Dim currentweekRangeEnd As String
+
+Dim prevweekRangeStart As String
+Dim prevweekRangeEnd As String
+Dim previousWeek As String
+
+Dim prevmonthRangeStart As String
+Dim prevmonthRangeEnd As String
+Dim previousMonth As String
+
+Dim currentYTDRangeStart As String
+Dim currentTYDRangeEnd As String
+
+Dim previousYearRangeStart As String
+Dim previousYearRangeEnd As String
+Dim previousYear As String
+
+
+Application.ScreenUpdating = False
+
+Worksheets("DS Column, data").Activate
+
+Tdaynum = Range("BJ4").Value
+Tweeknum = Range("BK4").Value
+Tmonthnum = Range("BL4").Value
+Tyearnum = Range("BM4").Value
+
+'Get Current Week FTQ
+Range("BO4").Activate
+    'Get starting cell in range
+    Do
+        currentweekRangeStart = ActiveCell.Offset(0, -9).Address
+        ActiveCell.Offset(1, 0).Activate
+
+    Loop Until ActiveCell.Value = Tweeknum
+    'Get ending cell in range
+    Do
+        currentweekRangeEnd = ActiveCell.Offset(0, -9).Address
+        ActiveCell.Offset(1, 0).Activate
+
+    Loop Until ActiveCell.Value <> Tweeknum
+
+
+Range("BH9").Formula = "=Average(" & currentweekRangeStart & ":" & currentweekRangeEnd & ")"
+
+
+
+'Get Previous Week
+Range("BO3").Activate
+    'Get starting cell in range
+    Do
+        prevweekRangeStart = ActiveCell.Offset(1, -9).Address
+        ActiveCell.Offset(1, 0).Activate
+        previousWeek = ActiveCell.Value
+
+    Loop Until ActiveCell.Value <> Tweeknum
+    'Get ending cell in range
+    Do
+        prevweekRangeEnd = ActiveCell.Offset(0, -9).Address
+        ActiveCell.Offset(1, 0).Activate
+
+    Loop Until ActiveCell.Value <> previousWeek
+
+
+Range("BH8").Formula = "=Average(" & prevweekRangeStart & ":" & prevweekRangeEnd & ")"
+
+'Get Current Month
+Range("BP4").Activate
+    'Get starting cell in range
+    Do
+        prevweekRangeStart = ActiveCell.Offset(0, -10).Address
+        ActiveCell.Offset(1, 0).Activate
+
+    Loop Until ActiveCell.Value = Tmonthnum Or ActiveCell.Value < Tmonthnum
+    'Get ending cell in range
+    Do
+        prevweekRangeEnd = ActiveCell.Offset(0, -10).Address
+        ActiveCell.Offset(1, 0).Activate
+
+    Loop Until ActiveCell.Value <> Tmonthnum
+
+
+Range("BH7").Formula = "=Average(" & prevweekRangeStart & ":" & prevweekRangeEnd & ")"
+
+'Get previous Month
+Range("BP4").Activate
+    'Get starting cell in range
+    Do
+        prevmonthRangeStart = ActiveCell.Offset(1, -10).Address
+        ActiveCell.Offset(1, 0).Activate
+        previousMonth = ActiveCell.Value
+
+    Loop Until ActiveCell.Value <> Tmonthnum
+    'Get ending cell in range
+    Do
+        prevmonthRangeEnd = ActiveCell.Offset(0, -10).Address
+        ActiveCell.Offset(1, 0).Activate
+
+            'Is there an Error "#Value!"
+            On Error Resume Next
+
+                previousYearRangeEnd = ActiveCell.Offset(-1, -16).Address
+                Range("BH9").Formula = "=Average(" & previousYearRangeStart & ":" & previousYearRangeEnd & ")"
+                Err.Clear
+
+    Loop Until ActiveCell.Value <> previousMonth
+
+
+Range("BH6").Formula = "=Average(" & prevmonthRangeStart & ":" & prevmonthRangeEnd & ")"
+
+'Get current YTD
+Range("BQ4").Activate
+    'Get starting cell in range
+    Do
+        currentYTDRangeStart = ActiveCell.Offset(0, -11).Address
+        ActiveCell.Offset(1, 0).Activate
+
+    Loop Until ActiveCell.Value = Tyearnum
+    'Get ending cell in range
+    Do
+        currentYTDRangeEnd = ActiveCell.Offset(0, -11).Address
+        ActiveCell.Offset(1, 0).Activate
+
+    Loop Until ActiveCell.Value <> Tyearnum
+
+
+Range("BH5").Formula = "=Average(" & currentYTDRangeStart & ":" & currentYTDRangeEnd & ")"
+
+'Get Previous Year
+Range("BQ4").Activate
+    'Get starting cell in range
+    Do
+        previousYearRangeStart = ActiveCell.Offset(1, -11).Address
+        ActiveCell.Offset(1, 0).Activate
+        previousYear = ActiveCell.Value
+
+    Loop Until ActiveCell.Value <> Tyearnum
+    'Get ending cell in range
+    Do
+        previousYearRangeEnd = ActiveCell.Offset(0, -11).Address
+        ActiveCell.Offset(1, 0).Activate
+
+    Loop Until ActiveCell.Value <> previousYear Or ActiveCell.Value = ""
+
+
+Range("BH4").Formula = "=Average(" & previousYearRangeStart & ":" & previousYearRangeEnd & ")"
+
+
+
+Sheet4.M235_UpdateCharts
+Sheet5.M3_UpdateCharts
+Sheet6.M2_UpdateCharts
+Sheet7.M1_UpdateCharts
+Sheet8.PHEV_UpdateCharts
+Sheet11.SR_Update
+
+Application.ScreenUpdating = True
+
+
+Worksheets("Strategy Room, FTQ").Activate
+
+
+End Sub
+
+
