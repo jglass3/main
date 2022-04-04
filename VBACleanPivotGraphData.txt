@@ -1,0 +1,204 @@
+'VBA: Takes pasted data from database, cleans, pivots, and charts the data 
+'Trend chart (line graph) to put alarms from machine under user's defined timeline
+'
+'
+
+
+Sub removeText()
+
+Dim getText1 As Variant
+Dim getText2 As Variant
+Dim getText3 As Variant
+Dim getText4 As Variant
+Dim getText5 As Variant
+Dim getText6 As Variant
+Dim A1 As Variant
+Dim A2 As Variant
+Dim A3 As Variant
+Dim mText1 As Variant
+Dim mText2 As Variant
+
+'convert dates for pivot table
+Columns("A:A").Select
+Range("A465").Activate
+Selection.TextToColumns Destination:=Range("A1"), DataType:=xlDelimited, _
+TextQualifier:=xlDoubleQuote, ConsecutiveDelimiter:=False, Tab:=True, _
+Semicolon:=False, Comma:=False, Space:=False, Other:=False, FieldInfo _
+:=Array(1, 1), TrailingMinusNumbers:=True
+
+getText1 = "Date:"
+getText2 = "No Alarms"
+getText3 = "End Of Report"
+getText4 = "Page:"
+getText5 = "OPEN"
+getText6 = ""
+
+Worksheets("Sheet1").Activate
+
+Range("A1").Select
+
+Do
+
+ActiveCell.Offset(1, 0).Activate
+
+
+gotText = ActiveCell.Value
+
+Select Case gotText
+
+    Case Is = getText1
+
+    ActiveCell.EntireRow.Delete
+    ActiveCell.Offset(-1, 0).Activate
+
+    Case Is = getText2
+
+    ActiveCell.EntireRow.Delete
+    ActiveCell.Offset(-1, 0).Activate
+
+    Case Is = getText3
+
+    ActiveCell.EntireRow.Delete
+    ActiveCell.Offset(-1, 0).Activate
+
+    Case Is = getText4
+
+    ActiveCell.EntireRow.Delete
+    ActiveCell.Offset(-1, 0).Activate
+
+    Case Is = getText5
+
+    ActiveCell.EntireRow.Delete
+    ActiveCell.Offset(-1, 0).Activate
+
+    Case Is = getText6
+
+    ActiveCell.EntireRow.Delete
+    ActiveCell.Offset(-1, 0).Activate
+
+    End Select
+
+A1 = ActiveCell.Offset(1, 0).Value
+A2 = ActiveCell.Offset(2, 0).Value
+A3 = ActiveCell.Offset(3, 0).Value
+A4 = ActiveCell.Offset(4, 0).Value
+
+Loop Until A1 = 0 And A2 = 0 And A3 = 0 And A4 = 0
+
+CreatePivotTable
+
+End Sub
+
+
+Sub CreatePivotTable()
+
+
+'new sheet for pivot table
+Dim PSheet As Worksheet
+'data sheet
+Dim DSheet As Worksheet
+'name for pivot table cache
+Dim PCache As PivotCache
+'name for pivot table
+Dim PTable As PivotTable
+'define data range
+Dim PRange As Range
+'get last row & column
+Dim LastRow As Long
+Dim LastCol As Long
+'Filter for pivot
+Dim pf As PivotField
+
+
+On Error Resume Next
+'Application.DisplayAlerts = False
+
+'delete pivottable & add pivot table
+Worksheets("PivotTable").Delete
+Sheets.Add Before:=ActiveSheet
+ActiveSheet.Name = "PivotTable"
+
+'rename sheet
+Application.DisplayAlerts = True
+Set PSheet = Worksheets("PivotTable")
+    Set DSheet = Worksheets("Sheet1")
+
+'define data range
+LastRow = DSheet.Cells(Rows.Count, 1).End(xlUp).Row
+LastCol = DSheet.Cells(1, Columns.Count).End(xlToLeft).Column
+
+Set PRange = DSheet.Cells(1, 1).Resize(LastRow, LastCol)
+
+'define cache
+Set PCache = ActiveWorkbook.PivotCaches.Create( _
+SourceType:=xlDatabase, _
+SourceData:=PRange)
+
+Set PTable = PCache.CreatePivotTable( _
+    TableDestination:=StartPvt, _
+    TableName:="DataPivotTable")
+
+
+'Insert Blank Pivot Table
+Set PTable = PCache.CreatePivotTable _
+(TableDestination:=PSheet.Cells(1, 1), TableName:="DataPivotTable")
+
+'Add to Row Field
+ActiveSheet.PivotTables("DataPivotTable").PivotFields("Set Date").Orientation = xlRowField
+ 
+ActiveSheet.PivotTables("DataPivotTable").PivotFields("Set Date").Position = 1
+
+'Add to Values Field
+ActiveSheet.PivotTables("DataPivotTable").AddDataField ActiveSheet.PivotTables( _
+        "DataPivotTable").PivotFields(" Message Description"), "Count of  Message Description", xlCount
+ 
+    With ActiveSheet.PivotTables("DataPivotTable").PivotFields("Count of  Message Description")
+
+        
+End With
+
+'Add to Column Field
+ActiveSheet.PivotTables("DataPivotTable").PivotFields(" Message Description").Orientation = xlColumnField
+ 
+ActiveSheet.PivotTables("DataPivotTable").PivotFields(" Message Description").Position = 1
+
+'Add duration
+ActiveSheet.PivotTables("DataPivotTable").PivotFields("Duration").Orientation = xlPageField
+
+CreateChart
+
+End Sub
+
+Sub CreateChart()
+
+
+Dim PvtTbl As PivotTable
+Dim rngChart As Range
+Dim objChart As Chart
+Set PvtTbl = Worksheets("PivotTable").PivotTables("DataPivotTable")
+
+'use the Charts.Add Method to add a new chart sheet in the workbook, which is represented as a Chart object
+'adds new chart sheet before or after specified sheet:
+ActiveWorkbook.Charts.Add Before:=Worksheets("PivotTable"), Count:=1
+
+'set as active worksheet:
+Set objChart = ActiveSheet
+
+'set range for the PivotChart, based on the existing PivotTable:
+Set rngChart = PvtTbl.TableRange2
+
+'specify the source data for the PivotChart, name of chart sheet and the chart type:
+With objChart
+
+.SetSourceData rngChart
+.Name = "PivotChart1"
+.ChartType = xlLineMarkers
+
+End With
+
+
+End Sub
+
+
+
+
