@@ -1,0 +1,50 @@
+//JavaScript: Grab data from spreadsheet and send data to new sheet
+//set a scheduled timer
+
+function extractDataQuality() {
+  
+  //Look at current date and pull it
+  var date = new Date();
+  var newdate = date.toString()
+  var newerdate = newdate.slice(4,15)
+  Logger.log(newerdate)
+  //Get 9835 Spreadsheet and data range from past 10 samples
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName("Sheet4"); 
+  var getDate = sheet.getRange("A2:A100");
+  var getDatevalues = getDate.getValues();
+  var getData = sheet.getRange("A2:H100"); 
+  var getActualData = getData.getValues();
+  
+
+  //Loop through data range by indexing '[i]' by slicing full date
+    for (var i = 0; i<getDatevalues.length; i++) {
+
+              var j = getDatevalues[i]
+              var d = getActualData[i]
+              var t = d.toString();
+              var y = j.toString();
+              var x = y.slice(4,15);
+             
+              
+
+      //If current date equals to date for each line item
+        if(x == newerdate) {
+
+
+          //Grab Counts Data Pull from Monthly Production Files's row data   
+              var source = SpreadsheetApp.getActiveSpreadsheet();
+              var sheetdata = source.getSheetByName("Sheet4");
+              var getRow = sheetdata.getRange(i+2, 1, 1, 8).getValues();
+
+          //Find target sheet
+              var destination = SpreadsheetApp.openById(".....")
+              var Sheet1 = destination.getSheetByName("Sheet1");
+              var targetrange = Sheet1.getRange(Sheet1.getLastRow() + 1, 1, 1, 8);
+          
+          //Paste values from source sheet to target sheet  
+              targetrange.setValues(getRow) ;
+
+       }
+    }
+}
