@@ -1,0 +1,42 @@
+
+//JavaScriptl: Run loop to highlight cells based on set parametere
+
+
+function highlightCells() {
+
+  var date = new Date();
+  var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+  var ss4 = spreadsheet.getSheetByName("Sheet4");
+
+
+  //GET DATA
+  var getDate = ss4.getRange("A3:A").getValues();
+  var getStationClass = ss4.getRange("C3:C").getValues();
+  var getLevel = ss4.getRange("E3:E").getValues();
+
+  for(i = 0; i < getDate.length; i++) {
+
+    var gotDate = getDate[i].toString().slice(4,10);
+    var todayDate = date.toString().slice(4,10);
+    var gotStationClass = getStationClass[i].toString();
+    var gotLevel = getLevel[i].toString();
+
+      if(gotDate == todayDate && gotStationClass > 2 && gotLevel < 4) {
+
+      ss4.getRange(i+3,7).setBackground("#ff4747");
+      ss4.getRange(i+3,5).setBackground("#ff4747");
+      ss4.getRange(i+3,4).setBackground("#ff4747"); 
+
+    //END IF STATEMENT 
+    }
+
+
+
+  //END LOOP
+  }
+
+  //SORT SHEET
+  sortsheet4()
+
+//END FUNCTION
+}
