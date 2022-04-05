@@ -1,0 +1,3614 @@
+//My first working verison of my daily assignment project in JavaScript/Google App Script
+//There is much redundancy, and I have moved to a more efficient working verison on Excel. 
+//Code was chopped and modified and needs to be cleaned up
+
+//JavaScript: Used to generate an alert based on operator certification
+//onEdit function
+
+
+
+/* 
+
+Daily Assignment sheet --> 
+
+Code looks at current day's date from computer's date/time and compares that date to the date listed on Sheet 1. 
+  Code identifies operator rotation for that column/shift.
+
+Each day on Sheet 1 has its own variable
+
+With Vlookup on sheet 3, we grab operator's name from sheet 1 and compare that to the data table (AKA S&K chart) on sheet 2, and 
+  pull the operator's level to corresponding station
+
+On sheet 3 loop runs in reverse which looks at station classification (AA=4, A=3, B=2, C=1) and operator certification. If station
+  classification is equal to, greater than 3 AND Operator certification is less than 3 show message (AKA toast).
+
+  If station classification greater than 3 AND Operator certification is less than 3. Send email. 
+
+  Loops break when column on sheet 1 reads /blank/ and [i] > -1 (First row in top of column)
+
+------------------------------------------------------------------------------------------------------------------------------------------
+
+
+*/
+
+function myFunction() {
+  //Grab Sheet 3
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName("Sheet3"); 
+  
+  //Look at current date and pull it
+  var date = new Date();
+  var dateU = Utilities.formatDate(new Date(), "GMT","d")
+  var month = date.getMonth();
+  var months = month + 1 ;
+  var monthDay = months + "/" + dateU;
+
+
+  //Day of Month
+  
+  var C2= sheet.getRange('C2');
+  var C2cell = C2.getValue();
+  
+  var D2= sheet.getRange('D2');
+  var D2cell = D2.getValue();
+  
+  var E2= sheet.getRange('E2');
+  var E2cell = E2.getValue();
+  
+  var F2= sheet.getRange('F2');
+  var F2cell = F2.getValue();
+  
+  var G2= sheet.getRange('G2');
+  var G2cell = G2.getValue();
+  
+  var H2= sheet.getRange('H2');
+  var H2cell = H2.getValue();
+  
+  var I2= sheet.getRange('I2');
+  var I2cell = I2.getValue();
+
+  var J2= sheet.getRange('J2');
+  var J2cell = J2.getValue();
+  
+  var K2= sheet.getRange('K2');
+  var K2cell = K2.getValue();
+  
+  var L2= sheet.getRange('L2');
+  var L2cell = L2.getValue();
+  
+  var M2= sheet.getRange('M2');
+  var M2cell = M2.getValue();
+  
+  var N2= sheet.getRange('N2');
+  var N2cell = N2.getValue();
+  
+  var O2= sheet.getRange('O2');
+  var O2cell = O2.getValue();
+  
+  var P2= sheet.getRange('P2');
+  var P2cell = P2.getValue();
+  
+  var Q2= sheet.getRange('Q2');
+  var Q2cell = Q2.getValue();
+  
+  var R2= sheet.getRange('R2');
+  var R2cell = R2.getValue();
+  
+  var S2= sheet.getRange('S2');
+  var S2cell = S2.getValue();
+  
+  var T2= sheet.getRange('T2');
+  var T2cell = T2.getValue();
+  
+  var U2= sheet.getRange('U2');
+  var U2cell = U2.getValue();
+  
+  var V2= sheet.getRange('V2');
+  var V2cell = V2.getValue();
+  
+  var W2= sheet.getRange('W2');
+  var W2cell = W2.getValue();
+  
+  var X2= sheet.getRange('X2');
+  var X2cell = X2.getValue();
+  
+  var Y2= sheet.getRange('Y2');
+  var Y2cell = Y2.getValue();
+  
+  var Z2= sheet.getRange('Z2');
+  var Z2cell = Z2.getValue();
+  
+  var AA2= sheet.getRange('AA2');
+  var AA2cell = AA2.getValue();
+  
+  var AB2 = sheet.getRange('AB2');
+  var AB2cell = AB2.getValue();
+  
+  var AC2 = sheet.getRange('AC2');
+  var AC2cell = AC2.getValue();
+  
+  var AD2= sheet.getRange('AD2');
+  var AD2cell = AD2.getValue();
+  
+  var AE2 = sheet.getRange('AE2');
+  var AE2cell = AE2.getValue();
+  
+  var AF2 = sheet.getRange('AF2');
+  var AF2cell = AF2.getValue();
+  
+  var AG2= sheet.getRange('AG2');
+  var AG2cell = AG2.getValue();
+
+//START FIRST SHIFT
+  
+    if(C2cell === monthDay) {
+
+      
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A3:A43').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B3:B43').getValues();
+      var data2 = ss3.getRange('C3:C43').getValues(); //change 
+      var column = ss1.getRange('C3:C43').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ }
+  
+    if(D2cell === monthDay) {
+
+      
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A3:A43').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B3:B43').getValues();
+      var data2 = ss3.getRange('D3:D43').getValues(); //change 
+      var column = ss1.getRange('D3:D43').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ }  
+  
+    if(E2cell === monthDay) {
+
+      
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A3:A43').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B3:B43').getValues();
+      var data2 = ss3.getRange('E3:E43').getValues(); //change 
+      var column = ss1.getRange('E3:E43').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ }  
+  
+     if(F2cell === monthDay) {
+
+      
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A3:A43').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B3:B43').getValues();
+      var data2 = ss3.getRange('F3:F43').getValues(); //change 
+      var column = ss1.getRange('F3:F43').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ }
+  
+      if(G2cell === monthDay) {
+
+      
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A3:A43').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B3:B43').getValues();
+      var data2 = ss3.getRange('G3:G43').getValues(); //change 
+      var column = ss1.getRange('G3:G43').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ }
+ 
+      if(H2cell === monthDay) {
+
+      
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A3:A43').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B3:B43').getValues();
+      var data2 = ss3.getRange('H3:H43').getValues(); //change 
+      var column = ss1.getRange('H3:H43').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ }
+  
+  
+      if(I2cell === monthDay) {
+
+      
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A3:A43').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B3:B43').getValues();
+      var data2 = ss3.getRange('I3:I43').getValues(); //change 
+      var column = ss1.getRange('I3:I43').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ }
+  
+      if(J2cell === monthDay) {
+        
+
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A3:A43').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B3:B43').getValues();
+      var data2 = ss3.getRange('J3:J43').getValues(); //change 
+      var column = ss1.getRange('J3:J43').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+      }
+ 
+  
+      if(K2cell === monthDay) {
+
+        
+
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A3:A43').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B3:B43').getValues();
+      var data2 = ss3.getRange('K3:K43').getValues(); //change 
+      var column = ss1.getRange('K3:K43').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ }
+  
+      if(L2cell === monthDay) {
+
+        
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A3:A43').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B3:B43').getValues();
+      var data2 = ss3.getRange('L3:L43').getValues(); //change 
+      var column = ss1.getRange('L3:L43').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ }
+  
+      if(M2cell === monthDay) {
+
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A3:A43').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B3:B43').getValues();
+      var data2 = ss3.getRange('M3:M43').getValues(); 
+      var column = ss1.getRange('M3:M43').getValues(); //change
+      
+        
+      
+        var i = data2.length - 1;
+       
+        do {
+       
+          var second = data2[i][0];
+          var first = stationClass[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          if(first >= 3 && second < 4) {
+
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+           
+
+          i--;
+         
+        }
+
+          while (columnV === "" && i > -1);
+        
+    }
+
+  
+      if(N2cell === monthDay) {
+
+        
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A3:A43').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B3:B43').getValues();
+      var data2 = ss3.getRange('N3:N43').getValues(); //change 
+      var column = ss1.getRange('N3:N43').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1)
+ }
+  
+      if(O2cell === monthDay) {
+
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A3:A43').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B3:B43').getValues();
+      var data2 = ss3.getRange('O3:O43').getValues(); //change 
+      var column = ss1.getRange('O3:O43').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1)
+ }  
+  
+    if(P2cell === monthDay) {
+
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A3:A43').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B3:B43').getValues();
+      var data2 = ss3.getRange('P3:P43').getValues(); //change 
+      var column = ss1.getRange('P3:P43').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ }
+  
+    if(Q2cell === monthDay) {
+
+      
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A3:A43').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B3:B43').getValues();
+      var data2 = ss3.getRange('Q3:Q43').getValues(); //change 
+      var column = ss1.getRange('Q3:Q43').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1)
+ }  
+  
+    if(R2cell === monthDay) {
+
+      
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A3:A43').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B3:B43').getValues();
+      var data2 = ss3.getRange('R3:R43').getValues(); //change 
+      var column = ss1.getRange('R3:R43').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ }  
+  
+     if(S2cell === monthDay) {
+
+      
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A3:A43').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B3:B43').getValues();
+      var data2 = ss3.getRange('S3:S43').getValues(); //change 
+      var column = ss1.getRange('S3:S43').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ }
+  
+      if(T2cell === monthDay) {
+
+      
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A3:A43').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B3:B43').getValues();
+      var data2 = ss3.getRange('T3:T43').getValues(); //change 
+      var column = ss1.getRange('T3:T43').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ }
+ 
+      if(U2cell === monthDay) {
+
+      
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A3:A43').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B3:B43').getValues();
+      var data2 = ss3.getRange('U3:U43').getValues(); //change 
+      var column = ss1.getRange('U3:U43').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ }
+  
+  
+      if(V2cell === monthDay) {
+
+      
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A3:A43').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B3:B43').getValues();
+      var data2 = ss3.getRange('V3:V43').getValues(); //change 
+      var column = ss1.getRange('V3:V43').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ }
+  
+      if(W2cell === monthDay) {
+
+      
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A3:A43').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B3:B43').getValues();
+      var data2 = ss3.getRange('W3:W43').getValues(); //change 
+      var column = ss1.getRange('W3:W43').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ }
+  
+      if(X2cell === monthDay) {
+
+      
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A3:A43').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B3:B43').getValues();
+      var data2 = ss3.getRange('X3:X43').getValues(); //change 
+      var column = ss1.getRange('X3:X43').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ }
+  
+      if(Y2cell === monthDay) {
+
+      
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A3:A43').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B3:B43').getValues();
+      var data2 = ss3.getRange('Y3:Y43').getValues(); //change 
+      var column = ss1.getRange('Y3:Y43').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ }
+  
+      if(Z2cell === monthDay) {
+
+      
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A3:A43').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B3:B43').getValues();
+      var data2 = ss3.getRange('Z3:Z43').getValues(); //change 
+      var column = ss1.getRange('Z3:Z43').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ }
+  
+      if(AA2cell === monthDay) {
+
+      
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A3:A43').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B3:B43').getValues();
+      var data2 = ss3.getRange('AA3:AA43').getValues(); //change 
+      var column = ss1.getRange('AA3:AA43').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ }
+  
+      if(AB2cell === monthDay) {
+
+      
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A3:A43').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B3:B43').getValues();
+      var data2 = ss3.getRange('AB3:AB43').getValues(); //change 
+      var column = ss1.getRange('AB3:AB43').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ }
+  
+   
+      if(AC2cell === monthDay) {
+
+      
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A3:A43').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B3:B43').getValues();
+      var data2 = ss3.getRange('AC3:AC43').getValues(); //change 
+      var column = ss1.getRange('AC3:AC43').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ }
+  
+      if(AD2cell === monthDay) {
+
+      
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A3:A43').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B3:B43').getValues();
+      var data2 = ss3.getRange('AD3:AD43').getValues(); //change 
+      var column = ss1.getRange('AD3:AD43').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ }
+  
+      if(AE2cell === monthDay) {
+
+      
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A3:A43').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B3:B43').getValues();
+      var data2 = ss3.getRange('AE3:AE43').getValues(); //change 
+      var column = ss1.getRange('AE3:AE43').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ }
+  
+      if(AF2cell === monthDay) {
+
+      
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A3:A43').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B3:B43').getValues();
+      var data2 = ss3.getRange('AF3:AF43').getValues(); //change 
+      var column = ss1.getRange('AF3:AF43').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ }
+  
+      if(AG2cell === monthDay) {
+
+      
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A3:A43').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B3:B43').getValues();
+      var data2 = ss3.getRange('AG3:AG43').getValues(); //change 
+      var column = ss1.getRange('AG3:AG43').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ } 
+  
+//END FIRST SHIFT
+
+//START SECOND SHIFT
+
+
+if(C2cell === monthDay) {
+
+      
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A45:A85').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B45:B85').getValues();
+      var data2 = ss3.getRange('C45:C85').getValues(); //change 
+      var column = ss1.getRange('C45:C85').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ }
+  
+    if(D2cell === monthDay) {
+
+      
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A45:A85').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B45:B85').getValues();
+      var data2 = ss3.getRange('D45:D85').getValues(); //change 
+      var column = ss1.getRange('D45:D85').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ }  
+  
+    if(E2cell === monthDay) {
+
+      
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A45:A85').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B45:B85').getValues();
+      var data2 = ss3.getRange('E45:E85').getValues(); //change 
+      var column = ss1.getRange('E45:E85').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ }  
+  
+     if(F2cell === monthDay) {
+
+      
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A45:A85').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B45:B85').getValues();
+      var data2 = ss3.getRange('F45:F85').getValues(); //change 
+      var column = ss1.getRange('F45:F85').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ }
+  
+      if(G2cell === monthDay) {
+
+      
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A45:A85').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B45:B85').getValues();
+      var data2 = ss3.getRange('G45:G85').getValues(); //change 
+      var column = ss1.getRange('G45:G85').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ }
+ 
+      if(H2cell === monthDay) {
+
+      
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A45:A85').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B45:B85').getValues();
+      var data2 = ss3.getRange('H45:H85').getValues(); //change 
+      var column = ss1.getRange('H45:H85').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ }
+  
+  
+      if(I2cell === monthDay) {
+
+      
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A45:A85').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B45:B85').getValues();
+      var data2 = ss3.getRange('I45:I85').getValues(); //change 
+      var column = ss1.getRange('I45:I85').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ }
+  
+      if(J2cell === monthDay) {
+        
+
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A45:A85').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B45:B85').getValues();
+      var data2 = ss3.getRange('J45:J85').getValues(); //change 
+      var column = ss1.getRange('J45:J85').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+      }
+ 
+  
+      if(K2cell === monthDay) {
+
+        
+
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A45:A85').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B45:B85').getValues();
+      var data2 = ss3.getRange('K45:K85').getValues(); //change 
+      var column = ss1.getRange('K45:K85').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ }
+  
+      if(L2cell === monthDay) {
+
+        
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A45:A85').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B45:B85').getValues();
+      var data2 = ss3.getRange('L45:L85').getValues(); //change 
+      var column = ss1.getRange('L45:L85').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ }
+  
+      if(M2cell === monthDay) {
+
+        
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A45:A85').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B45:B85').getValues();
+      var data2 = ss3.getRange('M45:M85').getValues(); 
+      var column = ss1.getRange('M45:M85').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1)
+ }
+  
+      if(N2cell === monthDay) {
+
+        
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A45:A85').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B45:B85').getValues();
+      var data2 = ss3.getRange('N45:N85').getValues(); //change 
+      var column = ss1.getRange('N45:N85').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ }
+  
+      if(O2cell === monthDay) {
+
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A45:A85').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B45:B85').getValues();
+      var data2 = ss3.getRange('O45:O85').getValues(); //change 
+      var column = ss1.getRange('O45:O85').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ }  
+  
+    if(P2cell === monthDay) {
+
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A45:A85').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B45:B85').getValues();
+      var data2 = ss3.getRange('P45:P85').getValues(); //change 
+      var column = ss1.getRange('P45:P85').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ }
+  
+    if(Q2cell === monthDay) {
+
+      
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A45:A85').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B45:B85').getValues();
+      var data2 = ss3.getRange('Q45:Q85').getValues(); //change 
+      var column = ss1.getRange('Q45:Q85').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ }  
+  
+    if(R2cell === monthDay) {
+
+      
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A45:A85').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B45:B85').getValues();
+      var data2 = ss3.getRange('R45:R85').getValues(); //change 
+      var column = ss1.getRange('R45:R85').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ }  
+  
+     if(S2cell === monthDay) {
+
+      
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A45:A85').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B45:B85').getValues();
+      var data2 = ss3.getRange('S45:S85').getValues(); //change 
+      var column = ss1.getRange('S45:S85').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ }
+  
+      if(T2cell === monthDay) {
+
+      
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A45:A85').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B45:B85').getValues();
+      var data2 = ss3.getRange('T45:T85').getValues(); //change 
+      var column = ss1.getRange('T45:T85').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ }
+ 
+      if(U2cell === monthDay) {
+
+      
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A45:A85').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B45:B85').getValues();
+      var data2 = ss3.getRange('U45:U85').getValues(); //change 
+      var column = ss1.getRange('U45:U85').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ }
+  
+  
+      if(V2cell === monthDay) {
+
+      
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A45:A85').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B45:B85').getValues();
+      var data2 = ss3.getRange('V45:V85').getValues(); //change 
+      var column = ss1.getRange('V45:V85').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ }
+  
+      if(W2cell === monthDay) {
+
+      
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A45:A85').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B45:B85').getValues();
+      var data2 = ss3.getRange('W45:W85').getValues(); //change 
+      var column = ss1.getRange('W45:W85').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ }
+  
+      if(X2cell === monthDay) {
+
+      
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A45:A85').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B45:B85').getValues();
+      var data2 = ss3.getRange('X45:X85').getValues(); //change 
+      var column = ss1.getRange('X45:X85').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ }
+  
+      if(Y2cell === monthDay) {
+
+      
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A45:A85').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B45:B85').getValues();
+      var data2 = ss3.getRange('Y45:Y85').getValues(); //change 
+      var column = ss1.getRange('Y45:Y85').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ }
+  
+      if(Z2cell === monthDay) {
+
+      
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A45:A85').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B45:B85').getValues();
+      var data2 = ss3.getRange('Z45:Z85').getValues(); //change 
+      var column = ss1.getRange('Z45:Z85').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ }
+  
+      if(AA2cell === monthDay) {
+
+      
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A45:A85').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B45:B85').getValues();
+      var data2 = ss3.getRange('AA45:AA85').getValues(); //change 
+      var column = ss1.getRange('AA45:AA85').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ }
+  
+      if(AB2cell === monthDay) {
+
+      
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A45:A85').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B45:B85').getValues();
+      var data2 = ss3.getRange('AB45:AB85').getValues(); //change 
+      var column = ss1.getRange('AB45:AB85').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ }
+  
+   
+      if(AC2cell === monthDay) {
+
+      
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A45:A85').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B45:B85').getValues();
+      var data2 = ss3.getRange('AC45:AC85').getValues(); //change 
+      var column = ss1.getRange('AC45:AC85').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ }
+  
+      if(AD2cell === monthDay) {
+
+      
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A45:A85').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B45:B85').getValues();
+      var data2 = ss3.getRange('AD45:AD85').getValues(); //change 
+      var column = ss1.getRange('AD45:AD85').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ }
+  
+      if(AE2cell === monthDay) {
+
+      
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A45:A85').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B45:B85').getValues();
+      var data2 = ss3.getRange('AE45:AE85').getValues(); //change 
+      var column = ss1.getRange('AE45:AE85').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ }
+  
+      if(AF2cell === monthDay) {
+
+      
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A45:A85').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B45:B85').getValues();
+      var data2 = ss3.getRange('AF45:AF85').getValues(); //change 
+      var column = ss1.getRange('AF45:AF85').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ }
+  
+      if(AG2cell === monthDay) {
+
+      
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A45:A85').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B45:B85').getValues();
+      var data2 = ss3.getRange('AG45:AG85').getValues(); //change 
+      var column = ss1.getRange('AG45:AG85').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ } 
+
+
+//
+//END SECOND SHIFT
+//
+
+//
+//Start Third Shift
+//
+
+
+if(C2cell === monthDay) {
+
+      
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A87:A127').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B87:B127').getValues();
+      var data2 = ss3.getRange('C87:C127').getValues(); //change 
+      var column = ss1.getRange('C87:C127').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ }
+  
+    if(D2cell === monthDay) {
+
+      
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A87:A127').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B87:B127').getValues();
+      var data2 = ss3.getRange('D87:D127').getValues(); //change 
+      var column = ss1.getRange('D87:D127').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ }  
+  
+    if(E2cell === monthDay) {
+
+      
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A87:A127').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B87:B127').getValues();
+      var data2 = ss3.getRange('E87:E127').getValues(); //change 
+      var column = ss1.getRange('E87:E127').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ }  
+  
+     if(F2cell === monthDay) {
+
+      
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A87:A127').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B87:B127').getValues();
+      var data2 = ss3.getRange('F87:F127').getValues(); //change 
+      var column = ss1.getRange('F87:F127').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ }
+  
+      if(G2cell === monthDay) {
+
+      
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A87:A127').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B87:B127').getValues();
+      var data2 = ss3.getRange('G87:G127').getValues(); //change 
+      var column = ss1.getRange('G87:G127').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ }
+ 
+      if(H2cell === monthDay) {
+
+      
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A87:A127').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B87:B127').getValues();
+      var data2 = ss3.getRange('H87:H127').getValues(); //change 
+      var column = ss1.getRange('H87:H127').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ }
+  
+  
+      if(I2cell === monthDay) {
+
+      
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A87:A127').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B87:B127').getValues();
+      var data2 = ss3.getRange('I87:I127').getValues(); //change 
+      var column = ss1.getRange('I87:I127').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ }
+  
+      if(J2cell === monthDay) {
+        
+
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A87:A127').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B87:B127').getValues();
+      var data2 = ss3.getRange('J87:J127').getValues(); //change 
+      var column = ss1.getRange('J87:J127').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+      }
+ 
+  
+      if(K2cell === monthDay) {
+
+        
+
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A87:A127').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B87:B127').getValues();
+      var data2 = ss3.getRange('K87:K127').getValues(); //change 
+      var column = ss1.getRange('K87:K127').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ }
+  
+      if(L2cell === monthDay) {
+
+        
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A87:A127').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B87:B127').getValues();
+      var data2 = ss3.getRange('L87:L127').getValues(); //change 
+      var column = ss1.getRange('L87:L127').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ }
+  
+      if(M2cell === monthDay) {
+
+        
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A87:A127').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B87:B127').getValues();
+      var data2 = ss3.getRange('M87:M127').getValues(); 
+      var column = ss1.getRange('M87:M127').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1)
+ }
+  
+      if(N2cell === monthDay) {
+
+        
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A87:A127').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B87:B127').getValues();
+      var data2 = ss3.getRange('N87:N127').getValues(); //change 
+      var column = ss1.getRange('N87:N127').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ }
+  
+      if(O2cell === monthDay) {
+
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A87:A127').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B87:B127').getValues();
+      var data2 = ss3.getRange('O87:O127').getValues(); //change 
+      var column = ss1.getRange('O87:O127').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ }  
+  
+    if(P2cell === monthDay) {
+
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A87:A127').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B87:B127').getValues();
+      var data2 = ss3.getRange('P87:P127').getValues(); //change 
+      var column = ss1.getRange('P87:P127').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ }
+  
+    if(Q2cell === monthDay) {
+
+      
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A87:A127').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B87:B127').getValues();
+      var data2 = ss3.getRange('Q87:Q127').getValues(); //change 
+      var column = ss1.getRange('Q87:Q127').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ }  
+  
+    if(R2cell === monthDay) {
+
+      
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A87:A127').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B87:B127').getValues();
+      var data2 = ss3.getRange('R87:R127').getValues(); //change 
+      var column = ss1.getRange('R87:R127').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ }  
+  
+     if(S2cell === monthDay) {
+
+      
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A87:A127').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B87:B127').getValues();
+      var data2 = ss3.getRange('S87:S127').getValues(); //change 
+      var column = ss1.getRange('S87:S127').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ }
+  
+      if(T2cell === monthDay) {
+
+      
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A87:A127').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B87:B127').getValues();
+      var data2 = ss3.getRange('T87:T127').getValues(); //change 
+      var column = ss1.getRange('T87:T127').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ }
+ 
+      if(U2cell === monthDay) {
+
+      
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A87:A127').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B87:B127').getValues();
+      var data2 = ss3.getRange('U87:U127').getValues(); //change 
+      var column = ss1.getRange('U87:U127').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ }
+  
+  
+      if(V2cell === monthDay) {
+
+      
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A87:A127').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B87:B127').getValues();
+      var data2 = ss3.getRange('V87:V127').getValues(); //change 
+      var column = ss1.getRange('V87:V127').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ }
+  
+      if(W2cell === monthDay) {
+
+      
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A87:A127').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B87:B127').getValues();
+      var data2 = ss3.getRange('W87:W127').getValues(); //change 
+      var column = ss1.getRange('W87:W127').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ }
+  
+      if(X2cell === monthDay) {
+
+      
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A87:A127').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B87:B127').getValues();
+      var data2 = ss3.getRange('X87:X127').getValues(); //change 
+      var column = ss1.getRange('X87:X127').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ }
+  
+      if(Y2cell === monthDay) {
+
+      
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A87:A127').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B87:B127').getValues();
+      var data2 = ss3.getRange('Y87:Y127').getValues(); //change 
+      var column = ss1.getRange('Y87:Y127').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ }
+  
+      if(Z2cell === monthDay) {
+
+      
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A87:A127').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B87:B127').getValues();
+      var data2 = ss3.getRange('Z87:Z127').getValues(); //change 
+      var column = ss1.getRange('Z87:Z127').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ }
+  
+      if(AA2cell === monthDay) {
+
+      
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A87:A127').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B87:B127').getValues();
+      var data2 = ss3.getRange('AA87:AA127').getValues(); //change 
+      var column = ss1.getRange('AA87:AA127').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ }
+  
+      if(AB2cell === monthDay) {
+
+      
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A87:A127').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B87:B127').getValues();
+      var data2 = ss3.getRange('AB87:AB127').getValues(); //change 
+      var column = ss1.getRange('AB87:AB127').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ }
+  
+   
+      if(AC2cell === monthDay) {
+
+      
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A87:A127').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B87:B127').getValues();
+      var data2 = ss3.getRange('AC87:AC127').getValues(); //change 
+      var column = ss1.getRange('AC87:AC127').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ }
+  
+      if(AD2cell === monthDay) {
+
+      
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A87:A127').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B87:B127').getValues();
+      var data2 = ss3.getRange('AD87:AD127').getValues(); //change 
+      var column = ss1.getRange('AD87:AD127').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ }
+  
+      if(AE2cell === monthDay) {
+
+      
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A87:A127').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B87:B127').getValues();
+      var data2 = ss3.getRange('AE87:AE127').getValues(); //change 
+      var column = ss1.getRange('AE87:AE127').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ }
+  
+      if(AF2cell === monthDay) {
+
+      
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A87:A127').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B87:B127').getValues();
+      var data2 = ss3.getRange('AF87:AF127').getValues(); //change 
+      var column = ss1.getRange('AF87:AF127').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ }
+  
+      if(AG2cell === monthDay) {
+
+      
+
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var ss3 = spreadsheet.getSheetByName("Sheet3");
+      var ss1 = spreadsheet.getSheetByName("Sheet1");
+      var stationClass = ss3.getRange('A87:A127').getValues();
+      var dept = ss3.getRange('B1').getValues();  
+      var operation = ss3.getRange('B87:B127').getValues();
+      var data2 = ss3.getRange('AG87:AG127').getValues(); //change 
+      var column = ss1.getRange('AG87:AG127').getValues(); //change
+      
+        
+      var i = data2.length - 1;
+       
+        do {
+          
+          var first = stationClass[i][0];
+          var second = data2[i][0];
+          var columnV = column[i][0];
+          var operationV = operation[i][0];
+          
+          if(first >= 3 && second < 4) {
+
+             
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            ss.toast('Operator: ' + columnV + ' needs trainer');    
+            
+            }
+          
+ 
+          i--;
+        }
+            while (columnV === "" && i > -1 )
+ } 
+
+//
+//End Third Shift
+//
+
+  
+}
+ 
