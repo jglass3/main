@@ -1,0 +1,64 @@
+//Advanced methods for SQL and deriving information
+
+
+Partitioning - spliting up data (vertical or horizontal)
+Material view - creating one data table from partitioning data
+
+//create new table and tell table how to partition 
+
+DROP TABLE IF EXISTS iot.sensor_msmt;
+CREATE TABLE iot.sensor_msmt (
+   sensor_id        int not null,
+   msmt_date        date not null,
+   temperature      int,
+   humidity         int
+) PARTITION BY RANGE (msmt_date);
+
+//create table for first month's partition
+CREATE TABLE iot.sensor_msmtt_y2021m01 PARTITION OF iot.sensor_msmt
+    FOR VALUES FROM ('2021-01-01') TO ('2021-02-01’);
+
+//create month for second month's partition
+CREATE TABLE iot.sensor_msmtt_y2021m02 PARTITION OF iot.sensor_msmt
+    FOR VALUES FROM ('2021-02-01') TO ('2021-03-01');
+
+
+//select all tables and grab 100 rows as table 1
+SELECT
+  *
+FROM
+  generate_series(1,100) as t1;
+
+
+//can pass in dates or time stamps as table 2; generate timestamp for every minute
+SELECT
+  *
+FROM
+  generate_series('2021-01-01 00:00'::timestamp,
+  				  '2021-02-15 00:00'::timestamp,
+  				  '1 minutes') as t2;
+//two tables in from clause, first query is 100 rows and second query will add in the timestamps
+select 
+  *
+from
+   (select * from generate_series(1,100)) as t1,
+   (select * from generate_series('2021-01-01 00:00'::timestamp,
+				      '2021-01-10 12:00', '1 minutes')) as t2
+
+//same as above, but generate random temp and humid data in one table
+insert into iot.sensor_msmt
+ (with sensors_datetimes as
+	(select 
+	  *
+	from
+	   (select * from generate_series(1,100)) as t1,
+	   (select * from generate_series('2021-01-01 00:00'::timestamp,
+			                            '2021-01-10 12:00', '1 minutes')) as t2
+	 )
+	select
+	   sd.*,
+	   floor(random()*30) as temperature,
+	   floor(random()*80) as humidity
+	from 
+		sensors_datetimes sd
+  )
