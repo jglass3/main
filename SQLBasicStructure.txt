@@ -1,0 +1,256 @@
+//Basic structure from quizdata.db
+
+---- Select values from columns
+
+//Display specific columns from a specfic table
+
+SELECT company, first_name, quiz_points FROM people;
+
+--- Where statement, adds selections crtieria to a statement
+
+//Select only CA criteria from table. Text is case sensitive 
+
+ Select * FROM people WHERE state_code='CA'; 
+
+//Select two (three) critieria from table
+
+Select * FROM people WHERE state_code='CA' AND shirt_or_hat='shirt' //AND team='Angry Ants'; 
+
+//OR statement with AND statement
+
+Select * FROM people WHERE (state_code='CA' OR state_code='CO') AND shirt_or_hat='shirt'; 
+
+NOTES:
+
+(AND team='Angry Ants') equals sign can be substituted with IS or IS NOT or <> to search for 'Angry Ants'
+
+OR statement is also supported. 
+
+---- Like statement '...%', returns a partial string
+
+//Return all states that start with C AND limit to only 10 responses
+
+Select * 
+FROM people 
+WHERE state_code LIKE 'C%'
+LIMIT 10
+
+----ORDER BY statement, Sort the results of query
+
+//Returns columns by Ascending state code (A,B,C...), and last name is Descending order (C, B, A...)
+
+Select state_code, last_name, first_name
+FROM people 
+ORDER BY state_code, last_name DESC;
+
+----- Find information about data
+
+//Return length of characters
+
+SELECT first_name, LENGTH(first_name)
+FROM people;
+
+//Return only unique values 
+
+SELECT DISTINCT(first_name)
+FROM people
+ORDER BY first_name;
+
+//Return the count of values in a column (will not count blank/null values)
+
+SELECT count(first_name)
+FROM people
+WHERE state_code='CA';
+
+---- Join two tables together
+
+//Returns first name, state code, division where peoples name starts with 'J' and region has 'South'
+
+SELECT people.first_name, people.state_code, states.division
+FROM people
+JOIN states ON people.state_code=states.state_abbrev 
+WHERE people.first_name LIKE 'J%' AND states.region='South';
+
+NOTES:
+
+When joining tables, there must be an overlapping column
+Alternatively, if using (SELECT *) this will return all columns from both tables
+
+//CROSS JOIN - Returns every combination from each table (factorial)
+
+SELECT * FROM people JOIN states;
+
+//INNER JOIN - Joins only records that match the join, and returns only matching data
+
+SELECT * FROM  people JOIN states
+ON people.state = states.abbr;
+
+//LEFT (OUTER) JOIN - Joins records that only match the left table, fills right table with NULL if nothing matches
+
+SELECT * 
+FROM people 
+LEFT JOIN states ON people.state_code = states.state_abbrev
+ORDER BY states.state_abbrev;
+
+//RIGHT (OUTER) JOIN - Same as above, but left table will be filled with NULL if nothing matches
+
+SELECT * FROM people RIGHT JOIN states 
+ON people.state = states.abbr;
+
+//FULL (OUTER) JOIN - Both tables join and if records don't match, both tables will display NULL
+
+SELECT * 
+FROM people 
+FULL OUTER JOIN states 
+ON people.state_code = states.state_abbrev
+
+
+---- Grouping data
+
+//Group data by how many times names appear in the table
+
+SELECT first_name, count(first_name)
+FROM people
+GROUP BY first_name;
+
+//Group data by state AND THEN quiz points (count quiz values of each score in each state)
+
+SELECT state_code, quiz_points, count(quiz_points)
+FROM people
+GROUP BY state_code,quiz_points;
+
+----- SQL supports math functions
+
+//Return quiz points of people who score greater than 70
+
+SELECT first_name, quiz_points
+FROM people
+GROUP BY quiz_points>=70;
+
+//Breakdown of how many people are on each team, total points earned by each team, and 
+// team's average score
+
+SELECT team, COUNT (*), SUM(quiz_points), AVG(quiz_points)
+FROM people
+GROUP BY team;
+
+NOTE
+
+Count(*) counts rows, but groups because of group by. If we take
+off the GROUP BY clause, the script will on return on data point. 
+
+---- Setup a query that relies on another query
+
+//Return a list of all the people who scored the highest on a list 
+
+SELECT first_name, last_name, quiz_points
+FROM people
+WHERE quiz_points=(SELECT MAX(quiz_points) FROM people);
+
+//Return a list of all participants from a state, but don't remember state abbreviation
+
+
+SELECT *
+FROM people
+WHERE state_code = (
+	SELECT state_abbrev FROM states WHERE state_name='Kansas'
+);
+
+---- Transforming data
+
+//Return value between 1 and 5 characters
+
+SELECT first_name, substr(last_name, 1, 5)
+FROM people;
+
+//Return replaced values from a to -
+
+SELECT replace(first_name, "a", "-")
+FROM people;
+
+//Return numerical numbers as characters (used for sorting)
+
+SELECT quiz_points
+FROM people
+ORDER BY CAST(quiz_points AS CHAR);
+
+//Return columns with different names
+SELECT first_name AS firstname
+FROM people;
+
+
+---- Insert Values into table
+
+
+INSERT INTO people
+(first_name, last_name)
+VALUES
+('George', 'White'),
+('Jenn', 'Smith'),
+('Carol', NULL), 
+
+NOTES:
+
+If value is blank, NULL must fill in the blank
+
+----- Update values in a table
+
+UPDATE people SET last_name='Morrison' WHERE first_name='Carlos';
+
+// Is Carlos Morrison the only Carlos in the data table? No? 
+
+SELECT last_name FROM people WHERE first_name='Carlos';
+
+// returned many carlos'
+
+UPDATE people
+SET last_name='Morrison'
+WHERE last_name='Morrrison';
+
+//ALTERNATIVE to above
+
+//Specifically targets Morrison by ID # 
+
+UPDATE people SET last_name='Morrison' WHERE id_number=175
+
+
+NOTES:
+SQL editior may not have undo button
+
+//Let's say company name changed across data table
+
+UPDATE people SET company='Megacorp Inc' WHERE company='Fisher LLC';
+
+
+----- Delete records from table
+
+//find the record
+
+Select *
+FROM people
+WHERE id_number=100;
+
+//delete specific record
+
+DELETE FROM people WHERE id_number=100;
+
+//Find records with NULL statement in quiz_points
+Select * FROM people WHERE quiz_points IS NULL;
+
+//delete records with Null score
+DELETE FROM people WHERE quiz_points IS NULL;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
