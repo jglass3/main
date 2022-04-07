@@ -1,0 +1,108 @@
+#Apriori test data used "Groceries.csv"
+#Used in Jupyter Notebook for analysis
+
+#ASSOCIATION ANALYSIS WITH APRIORI
+
+#INSTALL AND IMPORT LIBRARIES
+
+pip install apyori
+
+import pandas as pd              # For dataframes
+import matplotlib.pyplot as plt  # For plotting data
+from apyori import apriori       # For Apriori algorithm
+
+# LOAD AND PREPARE DATA
+
+transactions = []
+
+with open('Groceries.csv') as f:
+    for line in f:
+        transaction = [item for item in line.strip().split(',') if item != 'NaN']
+        transactions.append(transaction)
+    
+transactions[:3]
+
+# APPLY APRIORI
+
+rules = list(apriori(
+    transactions, 
+    min_support=0.001, 
+    min_confidence=0.10,
+    min_length=2,
+    max_length=2))
+
+#Minimum length and maximum length will affect processing time
+# Prints one rule
+print(rules[0])
+
+## Convert Rules to Readable Format
+
+rules_df = pd.DataFrame(
+    [{'From': list(rule[0])[0],
+    'To': list(rule[0])[1],
+    'Support': rule[1],
+    'Confidence': rule[2][0][2],
+    'Lift': rule[2][0][3]} for rule in rules if len(rule[0]) == 2])
+rules_df = rules_df.dropna()
+
+rules_df.head()
+
+## List Rules with N's
+
+# Pick top rules
+rules_df = rules_df.sort_values('Support', ascending=False).head(50)
+
+# List of all items
+items = set(rules_df['From']) | set(rules_df['To'])
+
+# Creates a mapping of items to numbers
+imap = {item : i for i, item in enumerate(items)}
+
+# Maps the items to numbers and adds the numeric 'FromN' and 'ToN' columns
+rules_df['FromN'] = rules_df['From'].map(imap)
+rules_df['ToN'] = rules_df['To'].map(imap)
+
+# Displays the top 20 association rules, sorted by Support
+rules_df.head(20)
+
+## Plot Rules
+
+# Adds ticks to the top of the graph also
+plt.rcParams['xtick.top'] = plt.rcParams['xtick.labeltop'] = True
+
+# Sets the size of the plot
+fig = plt.figure(figsize=(15, 7))
+
+# Draws a line between items for each rule
+# Colors each line according to the support of the rule
+for index, row in rules_df.head(20).iterrows():
+    plt.plot([row['FromN'], row['ToN']], [0, 1], 'o-',
+             c=plt.cm.viridis(row['Support'] * 10),
+             markersize=20,
+             lw=row['Confidence'] * 10)
+
+# Adds a colorbar and its title  
+cb = plt.colorbar(plt.cm.ScalarMappable(cmap='viridis'))
+cb.set_label('Support*10')
+
+# Adds labels to xticks and removes yticks
+plt.xticks(range(len(items)), items, rotation='vertical')
+plt.yticks([])
+plt.show()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
