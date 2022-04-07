@@ -1,0 +1,221 @@
+#Project below runs in the jupyter notebook
+#Uses data file AirPassenagers.csv
+
+# ARIMA: Autoregressive Integrated Moving Average
+
+# INSTALL AND IMPORT LIBRARIES
+
+pip install pmdarima
+
+#ARMIA catches the general upward trend along with seasonality 
+import pandas as pd
+import numpy as np
+from scipy import stats
+from matplotlib import pyplot as plt
+from matplotlib.dates import DateFormatter
+import statsmodels.api as sm
+from statsmodels.graphics.tsaplots import plot_acf
+from statsmodels.stats.diagnostic import acorr_ljungbox
+from pmdarima.arima import auto_arima
+
+# LOAD AND PREPARE DATA
+
+df = pd.read_csv('AirPassengers.csv', parse_dates=['Month'], index_col=['Month'])
+
+# PLOT DATA
+
+fig, ax = plt.subplots()
+plt.xlabel('Year: 1949-1960')
+plt.ylabel('Monthly Passengers (1000s)')
+plt.title('Monthly Intl Air Passengers')
+plt.plot(df, color='black')
+ax.xaxis.set_major_formatter(DateFormatter('%Y'))
+
+# SPLIT DATA AND CREATE TRAINING 
+#select data before a certain time
+#the data before is the training data
+#the data after is the testing
+trn = df.loc[df.index < '1958-01-01']
+
+#Plot the training data.
+
+fig, ax = plt.subplots()
+plt.xlabel('Year: 1949-1957')
+plt.ylabel('Monthly Passengers (1000s)')
+plt.title('Monthly Intl Air Passengers')
+plt.plot(trn, color='black')
+ax.xaxis.set_major_formatter(DateFormatter('%Y'))
+
+## Create Testing Dataset
+#Use data from 1958 through 1960 (the last three years) for testing.
+
+tst = df.loc[df.index >= '1958-01-01']
+
+fig, ax = plt.subplots()
+plt.xlabel('Year: 1958-1960')
+plt.ylabel('Monthly Passengers (1000s)')
+plt.title('Monthly Intl Air Passengers')
+plt.plot(tst, color='black')
+ax.xaxis.set_major_formatter(DateFormatter('%Y'))
+
+# PREPARE MODEL
+## Test Stationarity
+
+ARIMA requires non-stationary data. That is, ARIMA needs data where the mean, 
+#the variance, and/or the covariance vary over time. Non-stationary data shows 
+#significant correlations when lagged. A "correlogram" graph (or ACF plot) shows 
+#the degree of correlation at different values of lag. Ideally, none of the lag values 
+#will fall in the range of nonsignificant correlations.
+
+#there has to be changes in the mean and variation over times, and the data has
+#to have correlations at later times to earlier times
+trn_acf = plot_acf(trn, lags=24)
+#THe first 12 points have autocorrelations, outside the blue is signficant
+
+## Linear Model
+
+#Fit a linear regression model to serve as a baseline. 
+#The dependent (or endogenous) variable is the number of passengers. 
+#The independent (or exogenous) variable is a linear time trend, including a constant (or intercept).
+
+lr = sm.OLS(endog=trn['#Passengers'], exog=sm.add_constant(np.arange(1, 1 + trn.shape[0]))).fit() 
+print(lr.summary())
+
+#Extract the fitted values.
+
+y_hat = lr.fittedvalues
+
+#Extract the 95% prediction interval.
+
+y_ci = lr.get_prediction().conf_int(alpha=0.05)
+
+#Graph time series with linear regression line and corresponding 95% prediction interval.
+
+fig, ax = plt.subplots()
+plt.xlabel('Year: 1949-1957')
+plt.ylabel('Monthly Passengers (1000s)')
+plt.title('Monthly Intl Air Passengers')
+plt.plot(trn, color='black', label='Training Data')
+plt.plot(y_hat, color='blue', label='Linear Regression Line')
+plt.fill_between(y_hat.index, y_ci[:, 0], y_ci[:, 1], color='lightblue', alpha=0.5, label='95% Conf. Int.')
+plt.legend(bbox_to_anchor=(1.05, 1))
+ax.xaxis.set_major_formatter(DateFormatter('%Y'))
+#shows the linear regression, but is not good for prediction because we want to 
+#know seasonality
+
+# ARIMA: TRAIN MODEL
+
+#we need to tell the model how frequently things repeat (m=12)
+auto_arima_model = auto_arima(trn, m=12, with_intercept=False, suppress_warnings=True)
+print(auto_arima_model.summary())
+#tells us best parameters to run the model 
+#Important part: Model:             SARIMAX(1, 1, 0)x(0, 1, 0, 12)
+
+First set of numbers is for the basic, non-seasonal model    
+&nbsp;  1 &nbsp;&nbsp;&nbsp;    # p: Auto-regressive (AR) order   
+&nbsp;  1 &nbsp;&nbsp;&nbsp;    # d: Integrate (I), or degree of differencing   
+&nbsp;  0 &nbsp;&nbsp;&nbsp;    # q: Moving average (MA) order   
+
+auto_arima_model.order
+
+Second set of numbers is for seasonality    
+&nbsp;  0 &nbsp;&nbsp;&nbsp;    # P: Auto-regressive (AR) order    
+&nbsp;  1 &nbsp;&nbsp;&nbsp;    # D: Integrate (I), or degree of differencing    
+&nbsp;  0 &nbsp;&nbsp;&nbsp;    # Q: Moving average (MA) order   
+&nbsp;  12 &nbsp;  # M: Model period or seasonality   
+
+auto_arima_model.seasonal_order
+
+#Extract the residuals
+
+resid = auto_arima_model.resid()
+
+#Plot the standardized residuals.
+
+fig, ax = plt.subplots()
+plt.plot(trn.index, stats.zscore(resid), color='gray')
+plt.title('Standardized Residuals')
+plt.xlabel('Year: 1949-1957')
+ax.xaxis.set_major_formatter(DateFormatter('%Y'))
+#residuals are consistent
+
+#Plot the ACF (autocorrelation function) of the residuals. 
+
+res_acf = plot_acf(resid, lags=24)
+#the residuals are non significant meaning they are close to zero
+
+#Plot the p-values of the Ljung-Box test for autocorrelation.
+
+#ljungbox test - want to see p values greater than .05
+res_lb = acorr_ljungbox(resid, lags=24, return_df=False)[1]
+
+fig, ax = plt.subplots()
+plt.title('p-values for Ljung-Box statistic')
+plt.scatter(np.arange(1, 1 + len(res_lb)), res_lb, color='gray', label='p-value')
+plt.plot(np.arange(1, 1 + len(res_lb)), [0.05] * len(res_lb), '--', color='blue', label='0.05')
+plt.ylim(-0.1, 1.1)
+plt.legend(bbox_to_anchor=(1.3, 1))
+
+# TEST MODEL
+
+#Fit the best model to the training data.
+
+auto_arima_model.fit(trn)
+
+#Use the model to predict intervals for last three years.
+#That is, apply the model to the testing dataset.
+
+arima_predictions = auto_arima_model.predict(n_periods=36, alpha=0.05, return_conf_int=True)
+
+# Extract the time series of model predictions.
+
+y_pred = pd.Series(arima_predictions[0], index=tst.index)
+
+#Extract the 95% prediction interval.
+
+y_pred_lb, y_pred_ub = arima_predictions[1][:, 0], arima_predictions[1][:, 1]
+
+#Graph the training data (1949-1957).
+#Add the predictions for the testing data (1958-1960).
+#Add observed values from testing data.
+
+fig, ax = plt.subplots()
+plt.xlabel('Year: 1949-1960')
+plt.ylabel('Monthly Passengers (1000s)')
+plt.title('Monthly Intl Air Passengers')
+plt.fill_between(tst.index, y_pred_lb, y_pred_ub, color='lightblue', alpha=0.5, label='95% Conf. Int.')
+plt.plot(trn, color='black', label='Training Data')
+plt.plot(tst, color='blue', label='Test Data')
+plt.plot(y_pred, color='red', label='Forecast')
+plt.legend(bbox_to_anchor=(1.05, 1))
+ax.xaxis.set_major_formatter(DateFormatter('%Y'))
+
+#Create a dataframe with the observed values for the testing dataset.
+#Add the predictions from the ARIMA model.
+#Add the low and high boundaries for the 95% confidence intervals.
+
+tst_pred = pd.DataFrame({
+    'Actual': tst.iloc[:, 0].values, 
+    'Point Forecast': y_pred.values, 
+    'Lo 95': y_pred_lb,
+    'Hi 95': y_pred_ub
+    }, index=tst.index)
+
+tst_pred.head()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
