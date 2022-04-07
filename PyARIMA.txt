@@ -7,7 +7,8 @@
 
 pip install pmdarima
 
-#ARMIA catches the general upward trend along with seasonality 
+#ARMIA catches the general upward trend along with seasonality
+ 
 import pandas as pd
 import numpy as np
 from scipy import stats
@@ -35,6 +36,7 @@ ax.xaxis.set_major_formatter(DateFormatter('%Y'))
 #select data before a certain time
 #the data before is the training data
 #the data after is the testing
+
 trn = df.loc[df.index < '1958-01-01']
 
 #Plot the training data.
@@ -61,7 +63,7 @@ ax.xaxis.set_major_formatter(DateFormatter('%Y'))
 # PREPARE MODEL
 ## Test Stationarity
 
-ARIMA requires non-stationary data. That is, ARIMA needs data where the mean, 
+#ARIMA requires non-stationary data. That is, ARIMA needs data where the mean, 
 #the variance, and/or the covariance vary over time. Non-stationary data shows 
 #significant correlations when lagged. A "correlogram" graph (or ACF plot) shows 
 #the degree of correlation at different values of lag. Ideally, none of the lag values 
@@ -70,7 +72,7 @@ ARIMA requires non-stationary data. That is, ARIMA needs data where the mean,
 #there has to be changes in the mean and variation over times, and the data has
 #to have correlations at later times to earlier times
 trn_acf = plot_acf(trn, lags=24)
-#THe first 12 points have autocorrelations, outside the blue is signficant
+#The first 12 points have autocorrelations, outside the blue is signficant
 
 ## Linear Model
 
