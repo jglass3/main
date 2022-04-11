@@ -6,5 +6,6 @@ Docs beginning with JS are my JavaScript (Google App Script) that I have persona
 Docs beginning with VBA are my maros written for my excel projects/files
 
 Docs beginning with Py and SQL are my templates that I created walking through tutorials online.
+  Note: Python projects are found in my Juypter Notebook
 
 
