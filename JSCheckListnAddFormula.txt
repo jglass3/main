@@ -1,0 +1,60 @@
+/* 
+
+myFunction adds what department each operation is assigned too
+Data is being added to the sheet on a daily frequency by trigger
+A vlookup is needed to assigned the department based on a pre populate list
+The loop adds the formula to the appropiate line item if blank (default is Team Leader)
+
+
+*/
+
+function myFunction() {
+
+  //add vlookup formula to determine Team Leaders
+  var activeSheet = SpreadsheetApp.getActiveSpreadsheet();
+  var getSheet = activeSheet.getSheetByName("Sheet1");
+
+  var getRange = getSheet.getRange("I2:I");
+  var getValues = getRange.getValues();
+
+  var getRange2 = getSheet.getRange("A2:A");
+  var getValues2 = getRange2.getValues();
+
+  var getNull = getSheet.getRange("E2:E");
+  var gotNull = getNull.getValues();
+
+  
+//Add repeating vlookup equation and machine logged col equation
+  for (var i = 0; i < getValues.length; i++) {
+    
+    var iVals = getValues[i].toString();
+    var iVals2 = getValues2[i].toString();
+    var j = i+2
+
+      if(iVals===""&&iVals2!=="") {
+       var setForm = '=IFERROR(VLOOKUP(B' + (i+2) +',$L$2:$M$105,2,0),"Team Leader")'
+       var setMachineLogCol = '=if(OR(weekday(today())="Sunday",weekday(today())="Saturday"),0,if((text(today()-1, "mm/dd/yyyy"))=(text(right(A'+(i+2)+',10), "mm/dd/yyyy")), B'+(i+2)+', 0))'
+       var cell = getSheet.getRange("I"+ (j));
+       var cellMachineLog = getSheet.getRange("J"+ (j));
+           cell.setFormula(setForm)
+           cellMachineLog.setFormula(setMachineLogCol)
+      }
+
+  }
+
+  //Run loop to clear #N/A values for Bradford report
+  for (var j = 0; j < getValues.length; j++) {
+
+    var jVals = gotNull[j].toString();
+
+    if(jVals === "#N/A") {
+
+      getSheet.getRange(j+2,5).clearContent();
+
+    }
+
+
+  }
+
+
+}
