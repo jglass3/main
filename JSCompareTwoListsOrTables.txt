@@ -1,0 +1,169 @@
+/*
+Cross references production data and TL data, identifies TL not fill log out from 1st shift
+Function runs on daily trigger, and check incoming daily data
+*/
+
+function crossReferenceData1Shift() {
+
+  //Look at current date and pull it
+
+  var date = new Date(new Date().getFullYear(),new Date().getMonth(),new Date().getDate()-1);
+
+//slice date to make comparable to sheet date
+  var newDate = date.toString().slice(4,10);
+
+  var activeSheet = SpreadsheetApp.getActiveSpreadsheet();
+
+  var getSheet1 = activeSheet.getSheetByName("Sheet1");
+  var getSheet2 = activeSheet.getSheetByName("Sheet2");
+
+  //Grab Sheet 1 data
+  var getDate = getSheet1.getRange("A2:A");
+  var getDateV = getDate.getValues(); 
+
+  var getTLname = getSheet1.getRange("D2:D");
+  var getTLnameV = getTLname.getValues();
+
+  //Grab Sheet 2 data
+  var getDateS2 = getSheet2.getRange("A2:A");
+  var gotDateS2 = getDateS2.getValues();
+
+  var getDeptS2 = getSheet2.getRange("C2:C");
+  var gotDeptS2 = getDeptS2.getValues();
+
+  var getProdShift = getSheet2.getRange("D2:D");
+  var gotProdShift = getProdShift.getValues();
+
+  var getActualData = getSheet2.getRange("F2:F");
+  var gotActualData = getActualData.getValues();
+
+  var getTLDept = getSheet2.getRange("K2:K46");
+  var gotTLDept = getTLDept.getValues();
+
+  var get1shift = getSheet2.getRange("L2:L46");
+  var get1shiftV = get1shift.getValues();
+
+  var get1shiftN = getSheet2.getRange("L1");
+  var get1shiftNV = get1shiftN.getValues().toString();
+
+  var tellOn1Shift = getSheet2.getRange("O2:O46");
+  var tellOn1ShiftV = tellOn1Shift.getValues();
+
+  //Alternative to populating 1 in TL columns
+  //Remove else statement on 1st IF statement
+  // for (var p = 0; p < tellOn1ShiftV.length; p++) {
+  //   var changeTell = tellOn1ShiftV[p];
+
+  //     Logger.log(changeTell)
+  //     if(changeTell < 1 ) {
+      
+  //     var setCell = 1
+  //     getSheet2.getRange(p+2,15).setValue(setCell);
+  //     return
+
+  //   }
+
+
+  //   }
+
+
+
+
+  var nameTL = "" 
+  
+    //grab TL name for 1st shift
+    for (var i = 0; i < get1shiftV.length; i++) {
+      
+      var gotTLname = get1shiftV[i].toString();
+
+
+
+      // Don't reiterate the same Team Leader from sheet 2
+	  //Loops checks if Team Leader already has been ideniftied 
+      if(nameTL != gotTLname ) {
+
+                nameTL = gotTLname
+
+        //loop sheet 1 data for date and TL
+        for (var j = 0; j < getDateV.length; j++) {
+
+          var gotDateV = getDateV[j].toString();
+          var sliceDateV  = gotDateV.slice(4,10);
+          var gotTLnameV = getTLnameV[j].toString();
+          
+
+          //does TL's name exist today?
+            
+          if(sliceDateV == newDate && gotTLnameV == gotTLname){
+
+            var setCell = 0
+            getSheet2.getRange(i+2,15).setValue(setCell);
+
+            break;
+
+            //end 2nd if statement
+            }
+          //TL did not fill out sheet for today 
+          else{
+
+            var setCell = 1
+            getSheet2.getRange(i+2,15).setValue(setCell);
+            
+            //end else statement
+          }  
+          //  end loop 2
+          }
+        // end 1st if statement
+        }
+    //end loop 1
+    }
+
+    //Run loop to check production running data for the day
+    for (var k = 0; k < gotDateS2.length; k++) {
+
+      var gotDateS2V = gotDateS2[k].toString().slice(4,10)
+      var gotDeptS2V = gotDeptS2[k].toString();
+      var gotActualDataV = gotActualData[k];
+      
+
+      if(gotDateS2V == ""){
+        break;
+      }
+
+      if(newDate == gotDateS2V ){
+
+
+        for (var j = 0; j < gotTLDept.length; j++){
+
+          var gotTLDeptV = gotTLDept[j].toString();
+          var getTLTell = tellOn1ShiftV[j].toString();
+          var gotProdShiftV = gotProdShift[k].toString();
+            
+            //Was production less than 20 parts? If Target column in EWO is blank, record will not populate in this Google Sheet
+            //Record doesn't populate... TL won't go to zero thus being identified on the report
+            if((gotDeptS2V == gotTLDeptV) && (gotActualDataV < 20) && (getTLTell == 1) && (get1shiftNV == gotProdShiftV) ) {
+              
+
+              var setCell = 0
+              getSheet2.getRange(j+2,15).setValue(setCell);
+              break;
+
+
+            //end second if statement
+            }
+        //end second loop
+        }
+      //end if statement
+      }
+    //end first loop  
+    }
+    
+
+
+//end function  
+}
+
+
+
+
+
