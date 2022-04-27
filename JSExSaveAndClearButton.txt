@@ -1,0 +1,87 @@
+/*
+Macro button to save and clear data from Sheet1 and Sheet2, and save the data on Sheet4
+*/
+
+function main(workbook: ExcelScript.Workbook) {
+  //Get worksheet by name
+  var getSheet1 = workbook.getWorksheet('Sheet1');
+  var getSheet3 = workbook.getWorksheet('Sheet3');
+  var getSheet4 = workbook.getWorksheet('Sheet4');
+
+  //Get current names (Paste and log)
+  var getNames = getSheet1.getRange("C2:C12");
+  var gotNames = getNames.getValues();
+
+  //Paste location for current rotation
+  var pasteNames = getSheet1.getRange("B2:B12");
+
+  //Get data ranges to log info
+  var getOpLevel = getSheet3.getRange("C2:C12").getValues();
+  var getStatLevel = getSheet3.getRange("A2:A12").getValues();
+  var getOpName = getSheet1.getRange("C2:C12").getValues();
+  var getStatName = getSheet1.getRange("A2:A12").getValues();
+  var getTimestamp = getSheet1.getRange("D1").getValues();
+
+//Run loop to get rotation's info by each line
+  for (let i = 0; i < getStatLevel.length; i++) {
+
+    var gotOpLevel = getOpLevel[i][0];
+    var gotStatLevel = getStatLevel[i][0];
+    var gotStatName = getStatName[i][0];
+    var gotOpName = getOpName[i][0];
+
+    var lastrow = getSheet4.getRange("A1").getRangeEdge(ExcelScript.KeyboardDirection.down)
+
+    if(gotOpName != "") {
+      var lastrow = lastrow.getOffsetRange(1, 0)
+      lastrow.setValue(getTimestamp)
+
+      var lastrow = lastrow.getOffsetRange(0, 1)
+      lastrow.setValue(gotStatName)
+
+      var lastrow = lastrow.getOffsetRange(0, 1)
+      lastrow.setValue(gotStatLevel)
+
+      var lastrow = lastrow.getOffsetRange(0, 1)
+      lastrow.setValue(gotOpName)
+
+      var lastrow = lastrow.getOffsetRange(0, 1)
+      lastrow.setValue(gotOpLevel)
+    }
+  }
+
+  //Get sheet 4 range and sort by date 
+  var getHCell = workbook.getWorksheet('Sheet4').getRange("H2");
+  var getLastCell = getHCell.getExtendedRange(ExcelScript.KeyboardDirection.down).getLastCell();
+  var getLastCell = getLastCell.getAddress();
+  var getLastCell = getLastCell.slice(7, 12);
+  var selectTable = workbook.getWorksheet('Sheet4').getRange("A2:" + getLastCell);
+  selectTable.getSort().apply([{ key: 0, ascending: false }]);
+  
+  //check operator for certification and highlight cell 
+  var getOpLevel2 = getSheet4.getRange("E2:E52").getValues();
+
+  //run loop checking first 50 entries after sort
+  for (let j = 0; j < 11; j++) {
+
+    var gotOpLevel2 = getOpLevel2[j][0];
+
+    if (gotOpLevel2 < 4) {
+
+      getSheet4.getUsedRange().getCell(j + 1, 3).getFormat().getFill().setColor("#f04141");
+      getSheet4.getUsedRange().getCell(j + 1, 4).getFormat().getFill().setColor("#f04141");
+      getSheet4.getUsedRange().getCell(j + 1, 5).getFormat().getFill().setColor("#f04141");
+      //end highlight if statement
+    }
+    //end highlight cell loop
+  }
+
+  //activate sheet 4
+  workbook.getWorksheet('Sheet4').activate();
+
+  //save current rotation as previous rotation
+  pasteNames.setValue(gotNames);
+  getNames.clear(ExcelScript.ClearApplyTo.contents);
+
+  //end fuction   
+}
