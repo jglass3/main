@@ -1,0 +1,45 @@
+/*
+Grab data from Sheet3 and Sheet4 cells, and send data as EventData
+Looks at previous day's data and return that data to be able to send to another file
+Power Automate is used to trigger the code and also used to "catch" the data
+*/
+
+
+function main(workbook: ExcelScript.Workbook): EventData[] {
+  var table = workbook.getWorksheet('Sheet4').getTables()[0];
+  var range = table.getRangeBetweenHeaderAndTotal();
+  var rows = range.getValues();
+
+  //get yesterday's dateon sheet 3
+  //var prevdate = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate() - 1);
+  var prevdate = workbook.getWorksheet('Sheet3').getRange("E2").getValues().toString();
+  var prevdate = prevdate.slice(0, 5)
+
+  var records: EventData[] = [];
+  for (let row of rows) {
+    let [date, station_name, station_level, operator_name, operator_level, reaction_review] = row;
+    date = date.toString().slice(0, 5);
+
+    if (date == prevdate) {
+      records.push({
+        date: date as string,
+        station_level: station_level as number,
+        station_name: station_name as string,
+        operator_name: operator_name as string,
+        operator_level: operator_level as number,
+        reaction_review: reaction_review as string
+      })
+    }
+  }
+  console.log(JSON.stringify(records))
+  return records;
+}
+
+interface EventData {
+  date: string,
+  station_level: number,
+  station_name: string,
+  operator_name: string,
+  operator_level: number,
+  reaction_review: string
+}
