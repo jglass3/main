@@ -3,6 +3,8 @@ Script may be in either in Python, VBA, JavaScript (Google App or Excel Online),
 
 Docs beginning with JS are my JavaScript (Google App Script) that I have personally developed over time.
 
+Docs beginning with JSEx are my JavaScript Excel Online based that I modified for production use. 
+
 Docs beginning with VBA are my maros written for my excel projects/files
 
 Docs beginning with Py and SQL are my templates that I created walking through tutorials online.
