@@ -1,0 +1,60 @@
+/*
+"Catches" the EventData from previous script and save that data into rows by adding the data to last row
+"keys" is used to find and return the data
+*/
+
+
+function main(workbook: ExcelScript.Workbook, keys: string): string {
+
+  // Needed for testing purpose. Override the keys
+  // keys = `[{"date":"44647","station_level":4,"station_name":"Team Leader","operator_name":"BRADFIELD, WAYNE","operator_level":0},{"date":"44646","station_level":3,"station_name":"Team Leader","operator_name":"TAYLOR, JAY","operator_level":1}]`;
+
+  let table = workbook.getWorksheet('Sheet1').getTables()[0];
+  let range = table.getRangeBetweenHeaderAndTotal();
+  
+  // let overallMatch = true;
+
+  // table.getColumnByName('Date').getRangeBetweenHeaderAndTotal().setNumberFormatLocal("yyyy-mm-dd;@");
+  // table.getColumnByName('Capacity').getRangeBetweenHeaderAndTotal().getFormat()
+  //   .setHorizontalAlignment(ExcelScript.HorizontalAlignment.center);
+   let rows = range.getValues();
+
+  let keysObject = JSON.parse(keys) as EventData[];
+  //console.log(keysObject)
+
+     for (let keyObject of keysObject) {
+
+       var lastrow = table.getRange("A1").getRangeEdge(ExcelScript.KeyboardDirection.down)
+
+       var lastrow = lastrow.getOffsetRange(1, 0)
+       lastrow.setValue(keyObject["date"])
+
+       var lastrow = lastrow.getOffsetRange(0, 1)
+       lastrow.setValue(keyObject["station_level"])
+
+       var lastrow = lastrow.getOffsetRange(0, 1)
+       lastrow.setValue(keyObject["station_name"])
+
+       var lastrow = lastrow.getOffsetRange(0, 1)
+       lastrow.setValue(keyObject["operator_name"])
+
+       var lastrow = lastrow.getOffsetRange(0, 1)
+       lastrow.setValue(keyObject["operator_level"])
+
+       var lastrow = lastrow.getOffsetRange(0, 1)
+       lastrow.setValue(keyObject["reaction_review"])
+
+     }
+
+   //}
+
+ }
+
+  interface EventData {
+    date: string,
+    station_level: number,
+    station_name: string,
+    operator_name: string,
+    operator_level: number,
+    reaction_review: string
+  }
