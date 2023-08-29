@@ -1,7 +1,8 @@
 Using Github as my personal portfolio to document numerous scripts that I have made or scripts that I have found and modified.
 Script may be in either in Python, VBA, JavaScript (Google App or Excel Online), and SQL when applicable.
 
-**Adding Data Science projects 
+**Adding Data Science projects
+*** For Geospatial Interactive Maps vist: https://nbviewer.org/  and paste the geospatial github url (https://github.com/jglass3/main/....) into the url box and click "Go!"
 
 Docs beginning with JS are my JavaScript (Google App Script) that I have personally developed over time.
 
