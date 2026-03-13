@@ -1,1 +1,324 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
 
+# ============================================================
+# AVERAGE-BY-BAR MULTI-BUCKET FEATURE ANALYSIS
+# ------------------------------------------------------------
+# PURPOSE
+# Compare average path evolution by outcome bucket for the same
+# key variables, extending beyond MON vs SMALL_LOSS.
+#
+# LOGIC
+# - Uses FEAT_PATHS
+# - Uses stressed cohort only by default (stressA_b5 == 1)
+# - Uses mean by bar instead of median
+# - Builds tables + charts
+#
+# IMPORTANT
+# This is logical if the goal is to see whether the same support
+# variables preserve structure when we stop focusing only on medians
+# and only on MON vs SMALL_LOSS.
+#
+# OUTPUTS
+# 1) Mean tables by group and bar
+# 2) Std-dev tables by group and bar
+# 3) Mean-gap tables versus SMALL_LOSS
+# 4) Charts for average paths
+# 5) Charts for winner-vs-loss gap over time
+# 6) Count-by-bar chart
+# ============================================================
+
+if "FEAT_PATHS" not in globals():
+    raise RuntimeError("FEAT_PATHS not found. Run the feature-construction cell first.")
+
+df = FEAT_PATHS.copy()
+
+# ------------------------------------------------------------
+# SETTINGS
+# ------------------------------------------------------------
+USE_STRESSED_ONLY = True
+
+group_col = "outcome_group_6" if "outcome_group_6" in df.columns else "outcome_group"
+
+# If FEAT_PATHS only contains the earlier 3-group outcome labels,
+# this will automatically reduce to available groups.
+preferred_group_order = [
+    "MON",
+    "LARGE_WIN",
+    "MED_WIN",
+    "MID_WIN",
+    "SMALL_WIN",
+    "SMALL_LOSS",
+    "MED_LOSS",
+    "LARGE_LOSS",
+    "TAIL_LOSS",
+]
+
+# Same key variables as before, expanded analysis across all groups
+features_to_analyze = [
+    "progressTicks",
+    "maeTicks",
+    "net_repair_vs_damage",
+    "progress_slope_from_b5",
+    "hasRecoveredAboveEntry",
+    "recoveryToDamageRatio",
+    "damageToProgressRatio",
+]
+
+features_to_analyze = [f for f in features_to_analyze if f in df.columns]
+if not features_to_analyze:
+    raise RuntimeError("None of the requested features are present in FEAT_PATHS.")
+
+# ------------------------------------------------------------
+# BUILD ANALYSIS SUBSET
+# ------------------------------------------------------------
+need_cols = ["tradeId", "nBarsSinceEntry", group_col] + features_to_analyze
+if USE_STRESSED_ONLY:
+    if "stressA_b5" not in df.columns:
+        raise RuntimeError("stressA_b5 not found in FEAT_PATHS.")
+    need_cols.append("stressA_b5")
+
+ana = df[need_cols].copy()
+
+if USE_STRESSED_ONLY:
+    ana = ana[ana["stressA_b5"].fillna(False)].copy()
+
+# Keep only groups actually present
+present_groups = (
+    ana[[group_col, "tradeId"]]
+    .drop_duplicates()[group_col]
+    .dropna()
+    .unique()
+    .tolist()
+)
+
+group_order = [g for g in preferred_group_order if g in present_groups]
+if not group_order:
+    raise RuntimeError("No outcome groups found after filtering.")
+
+ana = ana[ana[group_col].isin(group_order)].copy()
+bars = sorted(ana["nBarsSinceEntry"].dropna().astype(int).unique())
+
+print("=" * 100)
+print("AVERAGE-BY-BAR MULTI-BUCKET FEATURE ANALYSIS SETUP")
+print("=" * 100)
+print(f"Rows used     : {len(ana):,}")
+print(f"Unique trades : {ana['tradeId'].nunique():,}")
+print(f"Bars          : {bars}")
+print("\nOutcome counts:")
+print(
+    ana[["tradeId", group_col]]
+    .drop_duplicates()[group_col]
+    .value_counts()
+    .reindex(group_order, fill_value=0)
+    .to_string()
+)
+
+# ------------------------------------------------------------
+# BUILD TABLES
+# ------------------------------------------------------------
+mean_tables = {}
+std_tables = {}
+count_tables = {}
+gap_vs_small_loss_tables = {}
+
+for feat in features_to_analyze:
+    tmp = (
+        ana.groupby([group_col, "nBarsSinceEntry"])[feat]
+        .agg(n="count", mean="mean", std="std")
+        .reset_index()
+    )
+
+    mean_tbl = (
+        tmp.pivot(index=group_col, columns="nBarsSinceEntry", values="mean")
+        .reindex(group_order)
+    )
+    std_tbl = (
+        tmp.pivot(index=group_col, columns="nBarsSinceEntry", values="std")
+        .reindex(group_order)
+    )
+    n_tbl = (
+        tmp.pivot(index=group_col, columns="nBarsSinceEntry", values="n")
+        .reindex(group_order)
+    )
+
+    mean_tables[feat] = mean_tbl
+    std_tables[feat] = std_tbl
+    count_tables[feat] = n_tbl
+
+    if "SMALL_LOSS" in mean_tbl.index:
+        sl_row = mean_tbl.loc["SMALL_LOSS"]
+        gap_tbl = mean_tbl.subtract(sl_row, axis=1)
+        gap_vs_small_loss_tables[feat] = gap_tbl
+
+# ------------------------------------------------------------
+# PRINT DATA TABLES
+# ------------------------------------------------------------
+print("\n" + "=" * 100)
+print("MEAN TABLES BY FEATURE")
+print("=" * 100)
+for feat in features_to_analyze:
+    print(f"\n--- MEAN {feat} BY GROUP AND BAR ---")
+    print(mean_tables[feat].to_string(float_format=lambda x: f"{x:.4f}"))
+
+print("\n" + "=" * 100)
+print("STD-DEV TABLES BY FEATURE")
+print("=" * 100)
+for feat in features_to_analyze:
+    print(f"\n--- STD {feat} BY GROUP AND BAR ---")
+    print(std_tables[feat].to_string(float_format=lambda x: f"{x:.4f}"))
+
+if "SMALL_LOSS" in group_order:
+    print("\n" + "=" * 100)
+    print("MEAN-GAP TABLES VS SMALL_LOSS")
+    print("=" * 100)
+    for feat in features_to_analyze:
+        print(f"\n--- MEAN GAP ({feat} - SMALL_LOSS) BY GROUP AND BAR ---")
+        print(gap_vs_small_loss_tables[feat].to_string(float_format=lambda x: f"{x:.4f}"))
+
+# ------------------------------------------------------------
+# CHART 1 — Mean path panels by feature
+# ------------------------------------------------------------
+n_feats = len(features_to_analyze)
+fig, axes = plt.subplots(n_feats, 1, figsize=(14, 5 * n_feats), sharex=True)
+
+if n_feats == 1:
+    axes = [axes]
+
+for ax, feat in zip(axes, features_to_analyze):
+    tbl = mean_tables[feat]
+
+    for grp in group_order:
+        if grp not in tbl.index:
+            continue
+        y = tbl.loc[grp].values.astype(float)
+        x = np.array(tbl.columns.astype(int))
+        msk = ~np.isnan(y)
+        ax.plot(x[msk], y[msk], marker="o", linewidth=2, label=grp)
+
+    ax.axhline(0, linewidth=1)
+    ax.set_title(f"Average {feat} by group and bar")
+    ax.set_ylabel(feat)
+    ax.legend()
+
+axes[-1].set_xlabel("Bars since entry (logged TELE checkpoints)")
+plt.tight_layout()
+plt.show()
+
+# ------------------------------------------------------------
+# CHART 2 — Focused winner/loss path comparison for progressTicks
+# ------------------------------------------------------------
+if "progressTicks" in mean_tables:
+    plt.figure(figsize=(14, 7))
+    tbl = mean_tables["progressTicks"]
+
+    for grp in group_order:
+        y = tbl.loc[grp].values.astype(float)
+        x = np.array(tbl.columns.astype(int))
+        msk = ~np.isnan(y)
+        plt.plot(x[msk], y[msk], marker="o", linewidth=2, label=grp)
+
+    plt.axhline(0, linewidth=1)
+    plt.title("Average progressTicks by group and bar")
+    plt.xlabel("Bars since entry")
+    plt.ylabel("Average progressTicks")
+    plt.legend()
+    plt.show()
+
+# ------------------------------------------------------------
+# CHART 3 — Focused support-feature comparison
+# ------------------------------------------------------------
+support_focus = [f for f in ["net_repair_vs_damage", "progress_slope_from_b5", "maeTicks", "hasRecoveredAboveEntry"] if f in mean_tables]
+
+if support_focus:
+    fig, axes = plt.subplots(len(support_focus), 1, figsize=(14, 4.5 * len(support_focus)), sharex=True)
+
+    if len(support_focus) == 1:
+        axes = [axes]
+
+    for ax, feat in zip(axes, support_focus):
+        tbl = mean_tables[feat]
+
+        for grp in group_order:
+            y = tbl.loc[grp].values.astype(float)
+            x = np.array(tbl.columns.astype(int))
+            msk = ~np.isnan(y)
+            ax.plot(x[msk], y[msk], marker="o", linewidth=2, label=grp)
+
+        ax.axhline(0, linewidth=1)
+        ax.set_title(f"Average {feat} by group and bar")
+        ax.set_ylabel(feat)
+        ax.legend()
+
+    axes[-1].set_xlabel("Bars since entry")
+    plt.tight_layout()
+    plt.show()
+
+# ------------------------------------------------------------
+# CHART 4 — Mean-gap versus SMALL_LOSS
+# ------------------------------------------------------------
+if "SMALL_LOSS" in group_order:
+    for feat in features_to_analyze:
+        tbl = gap_vs_small_loss_tables[feat]
+
+        plt.figure(figsize=(14, 6))
+        for grp in group_order:
+            if grp == "SMALL_LOSS":
+                continue
+            y = tbl.loc[grp].values.astype(float)
+            x = np.array(tbl.columns.astype(int))
+            msk = ~np.isnan(y)
+            plt.plot(x[msk], y[msk], marker="o", linewidth=2, label=f"{grp} - SMALL_LOSS")
+
+        plt.axhline(0, linewidth=1)
+        plt.title(f"Average-gap vs SMALL_LOSS over time — {feat}")
+        plt.xlabel("Bars since entry")
+        plt.ylabel(f"Mean gap in {feat}")
+        plt.legend()
+        plt.show()
+
+# ------------------------------------------------------------
+# CHART 5 — Count by bar
+# ------------------------------------------------------------
+count_tbl = (
+    ana.groupby([group_col, "nBarsSinceEntry"])["tradeId"]
+    .nunique()
+    .reset_index(name="n")
+)
+
+plt.figure(figsize=(14, 6))
+for grp in group_order:
+    sg = count_tbl[count_tbl[group_col] == grp].sort_values("nBarsSinceEntry")
+    if len(sg):
+        plt.plot(sg["nBarsSinceEntry"], sg["n"], marker="o", linewidth=2, label=grp)
+
+plt.title("Unique trade count by bar")
+plt.xlabel("Bars since entry")
+plt.ylabel("Unique trades observed")
+plt.legend()
+plt.show()
+
+# ------------------------------------------------------------
+# SUMMARY TABLE — early gap snapshot vs SMALL_LOSS
+# ------------------------------------------------------------
+if "SMALL_LOSS" in group_order:
+    snap_rows = []
+    early_bars = [b for b in [3, 5, 7, 9, 10, 15, 20] if b in bars]
+
+    for feat in features_to_analyze:
+        tbl = gap_vs_small_loss_tables[feat]
+        for grp in group_order:
+            if grp == "SMALL_LOSS":
+                continue
+            row = {"feature": feat, "group": grp}
+            for b in early_bars:
+                row[f"gap_b{b}"] = tbl.loc[grp, b] if (grp in tbl.index and b in tbl.columns) else np.nan
+            snap_rows.append(row)
+
+    snap = pd.DataFrame(snap_rows)
+
+    print("\n" + "=" * 100)
+    print("EARLY GAP SNAPSHOT VS SMALL_LOSS")
+    print("=" * 100)
+    print(snap.to_string(index=False, float_format=lambda x: f"{x:.4f}"))
